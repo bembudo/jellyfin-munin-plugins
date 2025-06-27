@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'json'
+require 'uri'
+
+server_url = "http://localhost:8096"    # Adjust as needed
+api_key = "YOUR_API_KEY"                # Replace with your actual key
+
+def fetch_active_user_count(server_url, api_key)
+  uri = URI("#{server_url}/Sessions?api_key=#{api_key}")
+  begin
+    res = Net::HTTP.get_response(uri)
+    return 0 unless res.is_a?(Net::HTTPSuccess)
+
+    doc = JSON.parse(res.body)
+    doc.select { |s| s["NowPlayingItem"] }
+       .map { |s| s["UserId"] }
+       .uniq
+       .count
+  rescue => e
+    warn "Error fetching data: #{e}"
+    return 0
+  end
+end
+
+if ARGV[0] == "config"
+  puts <<~CONFIG
+    graph_title Jellyfin Active Clients
+    graph_vlabel Users
+    graph_category media
+    graph_info Number of unique active Jellyfin users currently playing media.
+    active_users.label Active Clients
+  CONFIG
+  exit 0
+end
+
+puts "active_users.value #{fetch_active_user_count(server_url, api_key)}"
