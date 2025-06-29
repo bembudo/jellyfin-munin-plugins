@@ -45,3 +45,5 @@ Polls your Jellyfin server's `/Sessions` endpoint every 5 minutes and displays t
 active_users.value 1
 ```
 This indicates that 1 unique Jellyfin user is currently playing something.
+
+![jellyfin_munin](https://github.com/user-attachments/assets/a6a8297a-9e72-48ee-9484-bb90d69ef3df)
